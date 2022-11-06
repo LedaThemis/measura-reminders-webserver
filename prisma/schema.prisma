@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reminder {
+  id      String   @id @default(cuid())
+  text    String
+  cron    String // UTC
+  dueDate DateTime
+  userId  String
+}

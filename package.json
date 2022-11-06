@@ -1,0 +1,38 @@
+{
+  "name": "reminders-webserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "engines": {
+    "node": "16.17.1"
+  },
+  "scripts": {
+    "watch": "tsc -p . --watch",
+    "seed": "node dist/seed.js",
+    "build": "tsc -p .",
+    "start": "node dist/"
+  },
+  "keywords": [],
+  "author": "Leda",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^4.5.0",
+    "@types/cors": "^2.8.12",
+    "@types/nodemailer": "^6.4.6",
+    "axios": "^1.1.3",
+    "cors": "^2.8.5",
+    "cron-parser": "^4.6.0",
+    "dotenv": "^16.0.3",
+    "hyper-express": "^6.5.1",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^6.8.0",
+    "zod": "^3.19.1",
+    "zod-validation-error": "^0.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "@types/node-cron": "^3.0.5",
+    "prisma": "^4.5.0",
+    "typescript": "^4.8.4"
+  }
+}
