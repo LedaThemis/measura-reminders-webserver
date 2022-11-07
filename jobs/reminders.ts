@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { constructMessage, getUserInfo, transporterConfig } from '../utils';
+import { constructMessage, getUserInfo, sameDay, transporterConfig } from '../utils';
 import cron from 'node-cron';
 import parser from 'cron-parser';
 import { createTransport } from 'nodemailer';
@@ -70,28 +70,31 @@ export default async function remindersJob() {
           },
         });
 
-        const user = await getUserInfo(reminder.userId);
+        // Only send email if current due date is today
+        if (sameDay(currentDate, reminder.dueDate)) {
+          const user = await getUserInfo(reminder.userId);
 
-        if (!user) {
-          console.error(`User ${reminder.userId} does not exist!`);
-          return;
-        }
-
-        const userText = user.name ? `Hey ${user.name}!` : 'Hey there!';
-        const messageContent = `${userText}!\n\nReminder:\n${reminder.text}`;
-
-        const message = constructMessage(user.email, messageContent);
-
-        // Send mail
-        transporter.sendMail(message, (error, info) => {
-          if (error) {
-            console.log(`ERROR | Failed to send email: ${error.message}`);
-          } else {
-            const sentTo = info.accepted.map((v) => (typeof v === 'string' ? v : v.address));
-
-            console.log(`INFO | Sent ${info.messageId} to: ${new Intl.ListFormat().format(sentTo)}`);
+          if (!user) {
+            console.error(`User ${reminder.userId} does not exist!`);
+            return;
           }
-        });
+
+          const userText = user.name ? `Hey ${user.name}!` : 'Hey there!';
+          const messageContent = `${userText}!\n\nReminder:\n${reminder.text}`;
+
+          const message = constructMessage(user.email, messageContent);
+
+          // Send mail
+          transporter.sendMail(message, (error, info) => {
+            if (error) {
+              console.log(`ERROR | Failed to send email: ${error.message}`);
+            } else {
+              const sentTo = info.accepted.map((v) => (typeof v === 'string' ? v : v.address));
+
+              console.log(`INFO | Sent ${info.messageId} to: ${new Intl.ListFormat().format(sentTo)}`);
+            }
+          });
+        }
       }
     });
   }

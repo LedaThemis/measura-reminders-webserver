@@ -43,3 +43,12 @@ export const getUserInfo = async (userId: string) => {
 
   return response.data.user;
 };
+
+/**
+ * Returns whether provided dates are in same day
+ * @param d1 first date
+ * @param d2 second date
+ * @returns boolean
+ */
+export const sameDay = (d1: Date, d2: Date) =>
+  d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d1.getDate();
