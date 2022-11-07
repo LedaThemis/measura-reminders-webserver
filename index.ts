@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { reminderCreateSchema, reminderDeleteSchema, remindersGetSchema } from './schemas';
 import remindersJob from './jobs/reminders';
+import { getUserInfo } from './utils';
 
 dotenv.config();
 
@@ -75,6 +76,15 @@ webserver.post('/reminders', async (request, response) => {
     return response.json({
       state: 'failed',
       error: 'Invalid cron',
+    });
+  }
+
+  const user = await getUserInfo(body.userId);
+
+  if (!user) {
+    return response.json({
+      state: 'failed',
+      error: 'User does not exist',
     });
   }
 
