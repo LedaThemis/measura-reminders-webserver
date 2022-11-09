@@ -80,7 +80,7 @@ export default async function remindersJob() {
           }
 
           const userText = user.name ? `Hey ${user.name}!` : 'Hey there!';
-          const messageContent = `${userText}!\n\nReminder:\n${reminder.text}`;
+          const messageContent = `${userText}\n\nReminder:\n${reminder.text}`;
 
           const message = constructMessage(user.email, messageContent);
 
