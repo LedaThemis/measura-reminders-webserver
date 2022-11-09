@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { reminderCreateSchema, reminderDeleteSchema, remindersGetSchema } from './schemas';
 import remindersJob from './jobs/reminders';
-import { getUserInfo } from './utils';
+import { getUserInfo, isAuthenticated } from './utils';
 
 dotenv.config();
 
@@ -23,9 +23,11 @@ webserver.use(
 );
 
 webserver.use((request, response, next) => {
-  request.headers['authorization'] === `Bearer ${process.env.REMINDERS_AUTH_KEY}`
-    ? next()
-    : next(new Error('UNAUTHORIZED'));
+  if (isAuthenticated(request)) {
+    next();
+  } else {
+    next(new Error('UNAUTHORIZED'));
+  }
 });
 
 webserver.get('/', (request, response) => {
@@ -128,6 +130,13 @@ webserver.delete('/reminders/:reminderId', async (request, response) => {
 
   return response.json({
     state: 'success',
+  });
+});
+
+webserver.set_error_handler((request, response, error) => {
+  return response.json({
+    state: 'failed',
+    error: error.message,
   });
 });
 

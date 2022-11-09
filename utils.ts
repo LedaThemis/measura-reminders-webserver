@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
+import { DefaultRequestLocals, Request } from 'hyper-express';
 
 dotenv.config();
 
@@ -52,3 +53,10 @@ export const getUserInfo = async (userId: string) => {
  */
 export const sameDay = (d1: Date, d2: Date) =>
   d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d1.getDate();
+
+/**
+ * @param request
+ * @returns whether user is authenticated or not
+ */
+export const isAuthenticated = (request: Request<DefaultRequestLocals>) =>
+  request.headers['authorization'] === `Bearer ${process.env.REMINDERS_AUTH_KEY}`;
