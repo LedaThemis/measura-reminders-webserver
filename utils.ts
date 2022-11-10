@@ -38,9 +38,7 @@ type GetUserInfoResponse = {
  * @param userId id of user
  */
 export const getUserInfo = async (userId: string) => {
-  const response = await axios.get<GetUserInfoResponse>(
-    `${process.env.FRONTEND_ADDRESS}/api/users/${userId}?auth=${process.env.REMINDERS_AUTH_KEY}`
-  );
+  const response = await axios.get<GetUserInfoResponse>(`${process.env.FRONTEND_ADDRESS}/api/users/${userId}?auth=${process.env.REMINDERS_AUTH_KEY}`);
 
   return response.data.user;
 };
@@ -51,12 +49,24 @@ export const getUserInfo = async (userId: string) => {
  * @param d2 second date
  * @returns boolean
  */
-export const sameDay = (d1: Date, d2: Date) =>
-  d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d1.getDate();
+export const sameDay = (d1: Date, d2: Date) => d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d1.getDate();
 
 /**
  * @param request
  * @returns whether user is authenticated or not
  */
-export const isAuthenticated = (request: Request<DefaultRequestLocals>) =>
-  request.headers['authorization'] === `Bearer ${process.env.REMINDERS_AUTH_KEY}`;
+export const isAuthenticated = (request: Request<DefaultRequestLocals>) => request.headers['authorization'] === `Bearer ${process.env.REMINDERS_AUTH_KEY}`;
+
+/**
+ * Validates that a cron expression has minutes and hours specified
+ * @param cron cron expression
+ */
+export const validateCron = (cron: string) => {
+  const cronList = cron.split(' ');
+
+  if (cronList.length === 6) {
+    return false;
+  }
+
+  return cronList[0] !== '*' && cronList[1] !== '*';
+};

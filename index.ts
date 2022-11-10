@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { reminderCreateSchema, reminderDeleteSchema, remindersGetSchema } from './schemas';
 import remindersJob from './jobs/reminders';
-import { getUserInfo, isAuthenticated } from './utils';
+import { getUserInfo, isAuthenticated, validateCron } from './utils';
 
 dotenv.config();
 
@@ -78,6 +78,20 @@ webserver.post('/reminders', async (request, response) => {
     return response.json({
       state: 'failed',
       error: 'Invalid cron',
+    });
+  }
+
+  if (body.cron.split(' ').length === 6) {
+    return response.json({
+      state: 'failed',
+      error: 'Seconds option should not be specified.',
+    });
+  }
+
+  if (!validateCron(body.cron)) {
+    return response.json({
+      state: 'failed',
+      error: 'minutes and hours should be specified.',
     });
   }
 
